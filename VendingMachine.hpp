@@ -35,7 +35,7 @@ public:
     std::string getMachineName();
 
 protected:
-    void fillInventory(int stockedSKUs, std::istream& machineDefsInput, std::vector<Product> productDefsDB);
+    void fillInventory(int stockedSKUs, std::istream& machineDefsInput, std::vector<Product>& productDefsDB);
     std::string getValidProductLocation(std::istream& uiIn, std::ostream& uiOut);
     virtual void reportCurrentBalance(std::ostream& technicianOut);
     virtual void reportInitialBalance(std::ostream& technicianOut);

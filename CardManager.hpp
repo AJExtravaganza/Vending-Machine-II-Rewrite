@@ -1,3 +1,5 @@
+#pragma once
+
 #include "enums.h"
 #include "Transaction.hpp"
 

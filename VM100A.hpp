@@ -10,7 +10,7 @@ class VM100A : public VendingMachine
 {
 public:
     VM100A();
-    VM100A(std::istream& machineDefsInput, std::vector<Product> productDefsDB, int machineID);
+    VM100A(std::istream& machineDefsInput, std::vector<Product>& productDefsDB, int machineID);
     bool performTransaction(Product* currentProduct, std::ostream& uiOut, Transaction& currentTransaction);
     void refund(std::ostream& uiOut);
     bool requestTender(std::istream& uiIn, std::ostream& uiOut, PaymentMethod &paymentMethod, Transaction &currentTransaction);

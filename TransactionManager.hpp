@@ -1,3 +1,4 @@
+#pragma once
 
 #include "CardManager.hpp"
 #include "CashManager.hpp"

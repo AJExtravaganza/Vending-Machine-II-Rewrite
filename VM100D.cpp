@@ -8,7 +8,7 @@ VM100D::VM100D(): cardManagement(CardManager()), cashManagement(CashManager()), 
     machineType = 'D';
 }
 
-VM100D::VM100D(std::istream& machineDefsInput, std::vector<Product> productDefsDB, int machineID): cardManagement(CardManager()), cashManagement(true, true), selectedMethod(NOPAYMENT)
+VM100D::VM100D(std::istream& machineDefsInput, std::vector<Product>& productDefsDB, int machineID): cardManagement(CardManager()), cashManagement(true, true), selectedMethod(NOPAYMENT)
 {
     machineName = "100D";
     machineName += ('0' + machineID);
@@ -22,6 +22,7 @@ VM100D::VM100D(std::istream& machineDefsInput, std::vector<Product> productDefsD
 
 bool VM100D::performTransaction(Product* currentProduct, std::ostream& uiOut, Transaction& currentTransaction)
 {
+    // FIXME (Backbox#1#): change to "CARD" later
     if (selectedMethod == CASH)
     {
         return (cashManagement.performTransaction(currentProduct, uiOut, currentTransaction));

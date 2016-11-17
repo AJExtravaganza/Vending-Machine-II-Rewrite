@@ -76,3 +76,4 @@ void productDBInit(std::istream& productDefsInput, std::vector<Product> &databas
         }
     }
 }
+

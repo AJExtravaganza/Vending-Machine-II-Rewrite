@@ -1,3 +1,5 @@
+#pragma once
+
 #include "VendingMachine.hpp"
 #include "VM100A.hpp"
 #include "VM100B.hpp"

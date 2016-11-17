@@ -5,7 +5,7 @@ VM100C::VM100C(): cardManagement(CardManager())
     machineType = 'C';
 }
 
-VM100C::VM100C(std::istream& machineDefsInput, std::vector<Product> productDefsDB, int machineID): cardManagement(CardManager())
+VM100C::VM100C(std::istream& machineDefsInput, std::vector<Product>& productDefsDB, int machineID): cardManagement(CardManager())
 {
     machineName = "100C";
     machineName += ('0' + machineID);

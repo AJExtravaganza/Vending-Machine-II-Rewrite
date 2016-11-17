@@ -1,30 +1,25 @@
 #include "Product.hpp"
+//DEBUG #include <iostream>
 
 Product::Product(): currentQty(0), initialQty(0), price(0), description("Error: Uninitialised Product"), SKU("None")
 {
 
 }
 
-Product::Product(std::string SKUIn, int initialQtyIn, int priceIn, std::string descriptionIn): currentQty(initialQty), initialQty(initialQtyIn), price(priceIn), description(descriptionIn), SKU(SKUIn)
+Product::Product(std::string SKUIn, int initialQtyIn, int priceIn, std::string descriptionIn): currentQty(initialQtyIn), initialQty(initialQtyIn), price(priceIn), description(descriptionIn), SKU(SKUIn)
 {
 
 }
 
-Product::Product(std::string SKUIn, int initialQtyIn, std::vector<Product> &database): currentQty(0), initialQty(0), price(0), description("Error: Uninitialised Product"), SKU("None")
+Product::Product(Product* warehouseStock, int requestedQty): currentQty(0), initialQty(0), price(warehouseStock->price), description(warehouseStock->description), SKU(warehouseStock->SKU)
 {
-    bool productUninitialised = true;
+    //DEBUG std::cout << warehouseStock->currentQty << warehouseStock->description << " before load.\n";
 
-    for (unsigned int i = 0; ((i < database.size()) && productUninitialised); i++)
-    {
-        if(SKUIn == database[i].SKU)
-        {
-            initialQty = initialQtyIn;
-            currentQty = initialQty;
-            price = database[i].price;
-            SKU = database[i].SKU;
-            description = database[i].description;
-            productUninitialised = false;
-        }
-    }
+    initialQty = ((requestedQty <= warehouseStock->currentQty) ? requestedQty : warehouseStock->currentQty);
+    currentQty = initialQty;
+    warehouseStock->currentQty -= initialQty;
+
+    //DEBUG std::cout << initialQty << description << " loaded from warehouse.\n";
+    //DEBUG std::cout << warehouseStock->currentQty << warehouseStock->description << " after load.\n";
 }
 

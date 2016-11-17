@@ -10,7 +10,7 @@ class VM100B : public VendingMachine
 {
 public:
     VM100B();
-    VM100B(std::istream& machineDefsInput, std::vector<Product> productDefsDB, int machineID);
+    VM100B(std::istream& machineDefsInput, std::vector<Product>& productDefsDB, int machineID);
     bool performTransaction(Product * currentProduct, std::ostream& uiOut, Transaction& currentTransaction);
     void refund(std::ostream& uiOut);
     bool requestTender(std::istream& uiIn, std::ostream& uiOut, PaymentMethod &paymentMethod, Transaction &currentTransaction);
@@ -20,5 +20,3 @@ private:
     void reportInitialBalance(std::ostream& technicianOut);
     CashManager cashManagement;
 };
-
-// FIXME (Backbox#1#): does not seem to accept coins

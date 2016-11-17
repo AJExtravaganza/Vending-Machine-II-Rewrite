@@ -7,7 +7,7 @@ VM100A::VM100A(): cashManagement()
     machineType = 'A';
 }
 
-VM100A::VM100A(std::istream& machineDefsInput, std::vector<Product> productDefsDB, int machineID): cashManagement(true, false)
+VM100A::VM100A(std::istream& machineDefsInput, std::vector<Product>& productDefsDB, int machineID): cashManagement(true, false)
 {
     machineName = "100A";
     machineName += ('0' + machineID);

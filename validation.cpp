@@ -1,4 +1,5 @@
 #include "global.h"
+#include "limits.h" //LINUX
 #include "validation.hpp"
 
 #include <iostream>
@@ -6,8 +7,6 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-
-
 
 // TODO (Backbox#1#): Change to int (including calls)
 char getValidInt(std::istream& input, int lowerBound, int upperBound) //Fail to 0

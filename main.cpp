@@ -3,17 +3,16 @@ FIXED OBJECT SLICING WITH shared_ptr.  Consider unique_ptr if you can figure out
 
 Current Status:
 
-// TODO (Backbox#3#): Implement VM100B
-// FEATURE (Backbox#7#): Implement VM100D
-
 // TODO (Backbox#5#): Set relevant functions/parameters as const
 
  */
 
 
-#include "machineInitialisation.hpp"
+#include "MachineInitialisation.hpp"
 
 #include <iostream>
+#include <fstream> //DEBUG
+//#include "stdlib.h" //DEBUG
 
 
 
@@ -25,24 +24,24 @@ VendingMachine &selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vect
 
 int main()
 {
-// TODO (Backbox#1#): Introduction and startup
-    std::cout << "STUB: STARTUP INTRODUCTION TEXT\n\n";
+    std::ifstream testInputFromFile;
+    testInputFromFile.open("testInputs.txt");
+    istream* inStream = &std::cin; //Select input method here
 
+    std::string initSentinel = "";
     vector<std::shared_ptr<VendingMachine>> myMachines;
 
-// TODO (Backbox#1#): Sentinel loop for initialisation
-    std::cout << "STUB: GETTING SECRET INIT CODE\n\n";
+    while (initSentinel != INITSTRING){*inStream >> initSentinel;}
 
     MachineInitialisation("machines.txt", "products.txt", myMachines);
 
-    while(true)
+    VendingMachine* activeMachine = nullptr;
+
+    do
     {
-        VendingMachine * activeMachine = &(selectMachine(std::cin, std::cout, myMachines));
-        activeMachine->purchaseWrapper(std::cin, std::cout);
-        activeMachine->reportShutdown(std::cout);
-    }
-// TODO (Backbox#1#): Implement transaction loop with exit sentinel.
-    std::cout << "STUB: TRANSACTION LOOP\n\n";
+        activeMachine = &selectMachine(*inStream, std::cout, myMachines);
+        activeMachine->purchaseWrapper(*inStream, std::cout);
+    }while(activeMachine != nullptr);
 
     for (unsigned int i = 0; i < myMachines.size(); i++)
     {
@@ -51,6 +50,7 @@ int main()
 
     return 0;
 }
+// TODO (Backbox#1#): IMPLEMENT SHUTDOWN FLAG
 
 VendingMachine &selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vector<std::shared_ptr<VendingMachine>> &machineSet) // Is the & necessary?  Check.
 {
@@ -59,6 +59,10 @@ VendingMachine &selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vect
     uiOut << "\nSelect a machine --> ";
     uiIn >> machineSelection;
     ID = findMachine(machineSelection, machineSet);
+    if (ID == SHUTDOWNINTFLAG)
+    {
+        //return 0;
+    }
     return (ID >= 0) ? *machineSet[ID] : selectMachine(uiIn, uiOut, machineSet); // Recursive call for valid selection
 }
 
@@ -69,6 +73,10 @@ int findMachine(std::string requestedName, std::vector<std::shared_ptr<VendingMa
         if(machineSet[i]->getMachineName() == requestedName)
         {
             return i;
+        }
+        else if (requestedName == SHUTDOWNSTRING)
+        {
+            return SHUTDOWNINTFLAG;
         }
     }
 

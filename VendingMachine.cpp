@@ -1,4 +1,5 @@
 #include "VendingMachine.hpp"
+#include <cstddef> // LINUX
 
 
 VendingMachine::VendingMachine(): machineName("Uninitialised"), machineType(0), transactionRecord(TransactionManager()), inventory({})
@@ -33,24 +34,29 @@ void VendingMachine::dispenseProduct(Product* product, std::ostream& uiOut)
     uiOut << "One " << product->description << " dispensed.\n\n";
 }
 
-// FIXME (Backbox#1#): Modify to only allow products to be loaded as long as they are still available in productDefsDB. ...
-//
-//Ensure loaded products are subtracted from available quantity in productDefsDB
-//
-//Remember to add reference to parameter list for productDefsDB
-void VendingMachine::fillInventory(int stockedSKUs, std::istream& machineDefsInput, std::vector<Product> productDefsDB)
+
+void VendingMachine::fillInventory(int stockedSKUs, std::istream& machineDefsInput, std::vector<Product>& productDefsDB)
 {
     for (int i = 0; i < stockedSKUs; i++)
     {
-        int initialQty(0), locationRow(0), locationColumn(0);
+        int requestedQty(0), initialQty(0), locationRow(0), locationColumn(0);
         std::string locationStr, SKU;
+        Product* DBProduct = nullptr;
 
-        machineDefsInput >> locationStr >> SKU >> initialQty;
+        machineDefsInput >> locationStr >> SKU >> requestedQty;
+
         locationRow = locationStr[0] - '1'; //SHOULD PERFORM VALIDATION.  CONSIDER ADDING LATER.
         locationColumn = locationStr[1] - 'A';
 
-        Product tempProduct(SKU, initialQty, productDefsDB);
-        inventory[locationRow][locationColumn] = tempProduct; //Check logic
+        for (unsigned int DBIndex = 0; DBIndex < productDefsDB.size() && DBProduct == nullptr; DBIndex++)
+        {
+            if (SKU == productDefsDB[DBIndex].SKU)
+            {
+                DBProduct = &productDefsDB[DBIndex];
+            }
+        }
+
+        inventory[locationRow][locationColumn] = Product(DBProduct, requestedQty);
     }
 }
 
@@ -105,17 +111,14 @@ void VendingMachine::purchaseWrapper(std::istream& uiIn, std::ostream& uiOut)
 
     PaymentMethod currentPaymentMethod = NOPAYMENT;
 
-// FIXME (Backbox#1#): Change requestTender to a bool, and use as conditional for product selection
-    requestTender(uiIn, uiOut, currentPaymentMethod, currentTransaction);
-
-    if (currentPaymentMethod != NOPAYMENT)
+    if (requestTender(uiIn, uiOut, currentPaymentMethod, currentTransaction))
     {
         Product * selectedProduct = getPurchaseRequest(uiIn, uiOut);
 
         currentTransaction.product = *selectedProduct;
 
         Product * firstProduct = &inventory[0][0];
-        ptrdiff_t location = selectedProduct - firstProduct;
+        std::ptrdiff_t location = selectedProduct - firstProduct;
         currentTransaction.productRow = location % MACHINE_COLUMNS;
         currentTransaction.productColumn = location / MACHINE_COLUMNS;
 
@@ -147,7 +150,7 @@ void VendingMachine::purchaseWrapper(std::istream& uiIn, std::ostream& uiOut)
     }
     else
     {
-        uiOut << "ERROR: NO VALID CARD PROVIDED.";
+        uiOut << "ERROR: NO VALID CARD PROVIDED.\n";
     }
 
 }

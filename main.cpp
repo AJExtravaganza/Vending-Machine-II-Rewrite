@@ -12,15 +12,14 @@ Current Status:
 
 #include <iostream>
 #include <fstream> //DEBUG
-//#include "stdlib.h" //DEBUG
 
 
 
 
 using namespace std;
 
-int findMachine(std::string requestedName, std::vector<std::shared_ptr<VendingMachine>> &machineSet);
-VendingMachine &selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vector<std::shared_ptr<VendingMachine>> &machineSet);
+int findMachine(std::string requestedName, std::vector<std::shared_ptr<VendingMachine>>& machineSet);
+std::shared_ptr<VendingMachine> selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vector<std::shared_ptr<VendingMachine>>& machineSet);
 
 int main()
 {
@@ -35,13 +34,13 @@ int main()
 
     MachineInitialisation("machines.txt", "products.txt", myMachines);
 
-    VendingMachine* activeMachine = nullptr;
+    std::shared_ptr<VendingMachine> activeMachine = selectMachine(*inStream, std::cout, myMachines);
 
-    do
+    while(activeMachine)
     {
-        activeMachine = &selectMachine(*inStream, std::cout, myMachines);
         activeMachine->purchaseWrapper(*inStream, std::cout);
-    }while(activeMachine != nullptr);
+        activeMachine = selectMachine(*inStream, std::cout, myMachines);
+    }
 
     for (unsigned int i = 0; i < myMachines.size(); i++)
     {
@@ -50,23 +49,24 @@ int main()
 
     return 0;
 }
-// TODO (Backbox#1#): IMPLEMENT SHUTDOWN FLAG
 
-VendingMachine &selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vector<std::shared_ptr<VendingMachine>> &machineSet) // Is the & necessary?  Check.
+std::shared_ptr<VendingMachine> selectMachine(std::istream& uiIn, std::ostream& uiOut, std::vector<std::shared_ptr<VendingMachine>>& machineSet)
 {
     std::string machineSelection;
-    int ID(-1);
+    std::shared_ptr<VendingMachine> machine = nullptr;
+    int ID = -1;
+
     uiOut << "\nSelect a machine --> ";
     uiIn >> machineSelection;
     ID = findMachine(machineSelection, machineSet);
     if (ID == SHUTDOWNINTFLAG)
     {
-        //return 0;
+        return machine;
     }
-    return (ID >= 0) ? *machineSet[ID] : selectMachine(uiIn, uiOut, machineSet); // Recursive call for valid selection
+    return (ID >= 0) ? machineSet[ID] : selectMachine(uiIn, uiOut, machineSet); // Recursive call for valid selection
 }
 
-int findMachine(std::string requestedName, std::vector<std::shared_ptr<VendingMachine>> &machineSet) //Does this really need & for size to work?
+int findMachine(std::string requestedName, std::vector<std::shared_ptr<VendingMachine>>& machineSet)
 {
     for (unsigned int i = 0; i < machineSet.size(); i++)
     {

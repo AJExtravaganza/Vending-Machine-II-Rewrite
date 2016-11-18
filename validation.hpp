@@ -5,6 +5,6 @@
 
 
 
-char getValidInt(std::istream& input, int lowerBound, int upperBound);
+int getValidInt(std::istream& input, int lowerBound, int upperBound);
 char getValidMachineType(std::istream& input);
 bool isValidSKU(std::string SKU);

@@ -4,5 +4,6 @@ enum PaymentMethod
 {
     NOPAYMENT,
     CASH,
+    CARD,
     VALIDCARD
 };

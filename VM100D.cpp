@@ -22,12 +22,11 @@ VM100D::VM100D(std::istream& machineDefsInput, std::vector<Product>& productDefs
 
 bool VM100D::performTransaction(Product* currentProduct, std::ostream& uiOut, Transaction& currentTransaction)
 {
-    // FIXME (Backbox#1#): change to "CARD" later
     if (selectedMethod == CASH)
     {
         return (cashManagement.performTransaction(currentProduct, uiOut, currentTransaction));
     }
-    else if (selectedMethod == VALIDCARD)
+    else if (selectedMethod == CARD)
     {
         return (cardManagement.performTransaction(currentProduct, uiOut, currentTransaction));
     }
@@ -44,13 +43,15 @@ void VM100D::refund(std::ostream& uiOut)
 
 void VM100D::reportCurrentBalance(std::ostream& technicianOut)
 {
-    int cumulativeBalance = 0;
-    cumulativeBalance += cashManagement.reportCurrentBalance(technicianOut);
+    int cumulativeRevenue = 0;
+    cumulativeRevenue -= cashManagement.reportInitialBalance();
+    cumulativeRevenue += cashManagement.reportCurrentBalance(technicianOut);
     technicianOut << "\b";
-    cumulativeBalance += cardManagement.reportCurrentBalance(technicianOut);
+    cumulativeRevenue += cardManagement.reportCurrentBalance(technicianOut);
+// TODO (Backbox#1#): Is balance useful, or should the total provide revenue instead?
     technicianOut << "Total Revenue: $"
-                  << (cumulativeBalance / 100) << "."
-                  << std::setw(2) << std::setfill('0') << (cumulativeBalance % 100) << "\n";
+                  << (cumulativeRevenue / 100) << "."
+                  << std::setw(2) << std::setfill('0') << (cumulativeRevenue % 100) << "\n";
 }
 
 void VM100D::reportInitialBalance(std::ostream& technicianOut)
@@ -61,7 +62,6 @@ void VM100D::reportInitialBalance(std::ostream& technicianOut)
 bool VM100D::requestTender(std::istream& uiIn, std::ostream& uiOut, PaymentMethod &paymentMethod, Transaction &currentTransaction)
 {
     uiOut << "Pay with cash[1], or card[2]? ";
-// FIXME (Backbox#1#): this should return int, not char, but calls to it will need to be changed
     int selection = static_cast<int>(getValidInt(uiIn, 1, 2));
     switch (selection)
     {
@@ -70,8 +70,7 @@ bool VM100D::requestTender(std::istream& uiIn, std::ostream& uiOut, PaymentMetho
         return cashManagement.requestTender(uiIn, uiOut, paymentMethod, currentTransaction);
         break;
     case 2:
-// FIXME (Backbox#1#): change to "CARD" later
-        selectedMethod = VALIDCARD;
+        selectedMethod = CARD;
         return cardManagement.requestTender(uiIn, uiOut, paymentMethod, currentTransaction);
         break;
     default:

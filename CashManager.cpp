@@ -111,6 +111,11 @@ void CashManager::refund(std::ostream& uiOut)
     dispenseChange(change, uiOut);
 }
 
+int CashManager::reportCurrentBalance()
+{
+    return currentCash.balance;
+}
+
 int CashManager::reportCurrentBalance(std::ostream& technicianOut)
 {
     technicianOut << "Current Balance: $"
@@ -122,6 +127,11 @@ int CashManager::reportCurrentBalance(std::ostream& technicianOut)
                   << currentCash.dimes << " D, "
                   << currentCash.nickels << " N)\n";
     return currentCash.balance;
+}
+
+int CashManager::reportInitialBalance()
+{
+    return initialCash.balance;
 }
 
 int CashManager::reportInitialBalance(std::ostream& technicianOut)

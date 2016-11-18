@@ -4,10 +4,6 @@ class CashSet
 {
     friend class CashManager;
     friend class TransactionManager;
-    //friend class VM100A;
-// TODO (Backbox#1#): change to individual reportign function later
-    //friend void TransactionManager::transactionReport(std::ostream& technicianOut);
-
 
 public:
     CashSet();
